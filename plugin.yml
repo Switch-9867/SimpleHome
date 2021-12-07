@@ -1,0 +1,9 @@
+name: SimpleHome
+main: com.switchhd.simplehome.SpigotPlugin
+version: 1.0
+api-version: 1.18
+commands:
+    home:
+        description: Sends you to your bed
+        usage: /<command>
+        permission: simplehome.home
