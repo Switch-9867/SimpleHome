@@ -1,6 +1,6 @@
 name: SimpleHome
 main: com.switchhd.simplehome.SpigotPlugin
-version: 1.0
+version: 1.0.2
 api-version: 1.18
 commands:
     home:
