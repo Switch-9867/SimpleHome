@@ -6,17 +6,35 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class CommandHome implements CommandExecutor{
 	
 	// create constants that define the cooldown
 	private final TimeUnit timeUnit = TimeUnit.SECONDS;
 	private final long teleportCooldown = 60l;
+	
+	// Define effects to play when teleporting
+	private final Sound teleportSound = Sound.BLOCK_AMETHYST_BLOCK_PLACE;
+	private final float soundVolume = 1;
+	
+	private final Particle teleportParticle = Particle.ASH;
+	
+	// Define text to display to the user.
+	private final String teleportString = "Teleporting home";
+	private final String textModifiers = ChatColor.ITALIC + "" + ChatColor.GRAY;
 	
 	// create a data structure that associates players with a Date object.
 	// I'll use this Date to remember the last time this command was run.
@@ -72,11 +90,42 @@ public class CommandHome implements CommandExecutor{
 		// Record the time
 		PlayerHomeCooldown.put(pUUID, t);
 		
+		//Play teleport effect
+		TeleportEffect(player);
+		
+		Location playerCoordinates = player.getLocation();
+		int distance = (int) Math.round(playerCoordinates.distance(homeLocation));
+		
 		// notify the user and teleport them.
-		player.sendMessage("Teleporting Home");
+		player.sendMessage(textModifiers + teleportString + " from: " + ChatColor.RESET + ChatColor.GREEN + 
+				"[" + playerCoordinates.getBlockX() + ", " + playerCoordinates.getBlockY() + ", " + playerCoordinates.getBlockZ() + "] " +
+				ChatColor.RESET + " (" + distance + " blocks away.)");
 		player.teleport(homeLocation);
+		
+		//Play arrive effect
+		ArriveEffect(player);
 		
 		return true;
 	}
+	
+	private void TeleportEffect(Player player) {
+		World world = player.getWorld();
+		Location location = player.getLocation();
+		location.add(0,1,0);
+		
+		world.playSound(location, teleportSound, soundVolume, 0.5f);
+		world.spawnParticle(teleportParticle, location, 100, 0.2f, 0.5f, 0.2f);
+		
+	}
+
+	private void ArriveEffect(Player player) {
+		World world = player.getWorld();
+		Location location = player.getLocation();
+		
+		world.playSound(location, teleportSound, soundVolume, 2f);
+		
+	}
+
+	
 	
 }
