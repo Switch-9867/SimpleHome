@@ -94,7 +94,11 @@ public class CommandHome implements CommandExecutor{
 		TeleportEffect(player);
 		
 		Location playerCoordinates = player.getLocation();
-		int distance = (int) Math.round(playerCoordinates.distance(homeLocation));
+		int distance = -1;
+		if (playerCoordinates.getWorld() == homeLocation.getWorld()) {
+			distance = (int) Math.round(playerCoordinates.distance(homeLocation));
+		}
+		
 		
 		// notify the user and teleport them.
 		player.sendMessage(textModifiers + teleportString + " from: " + ChatColor.RESET + ChatColor.GREEN + 
